@@ -1,0 +1,22 @@
+language: go
+
+go:
+  - 1.4
+  - 1.5
+  - 1.6
+  - tip
+
+matrix:
+  allow_failures:
+    - go: tip
+    - go: 1.4
+
+before_script:
+  - go get -u github.com/golang/lint/golint
+
+script:
+  - go get -v -t ./...
+  - go test -v ./...
+  - test -z "$(gofmt -s -l -w . | tee /dev/stderr)"
+  - test -z "$(golint ./... | grep -v ffjson | tee /dev/stderr)"
+  - go vet ./...
