@@ -23,5 +23,5 @@ type Tracer interface {
 		level Level, code, msg string,
 		htStatus int, err error,
 		svcname string, stack ...string,
-	)
+	) *TracerEntry
 }

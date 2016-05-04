@@ -25,6 +25,8 @@ func NewTracerNop() *TracerNop {
 }
 
 // AddEntry does nothing.
-func (*TracerNop) AddEntry(Level, string, string, int, error, string, ...string) {}
+func (*TracerNop) AddEntry(Level, string, string, int, error, string, ...string) *TracerEntry {
+	return nil
+}
 
 var _ Tracer = (*TracerNop)(nil)

@@ -20,25 +20,14 @@ package tlog
 // in-memory.
 type TracerMemory struct {
 	FilterLevel Level
-	Entries     []Entry
-}
-
-// An Entry represents a event created by a service.
-type Entry struct {
-	Code       string
-	Level      Level
-	Service    string
-	Stack      []string
-	Message    string
-	HTTPStatus int
-	InnerError error
+	Entries     []TracerEntry
 }
 
 // NewTracerMemory creates a new instance of TracerMemory type.
 func NewTracerMemory(level Level) *TracerMemory {
 	return &TracerMemory{
 		level,
-		make([]Entry, 0),
+		make([]TracerEntry, 0),
 	}
 }
 
@@ -47,12 +36,12 @@ func (t *TracerMemory) AddEntry(
 	level Level, code, msg string,
 	htStatus int, err error,
 	svcname string, stack ...string,
-) {
+) *TracerEntry {
 	if level < t.FilterLevel {
-		return
+		return nil
 	}
 
-	t.Entries = append(t.Entries, Entry{
+	entry := TracerEntry{
 		code,
 		level,
 		svcname,
@@ -60,13 +49,15 @@ func (t *TracerMemory) AddEntry(
 		msg,
 		htStatus,
 		err,
-	})
+	}
+	t.Entries = append(t.Entries, entry)
+	return &entry
 }
 
 // FilterEntries returns event entries where its severity level is greater or equal to
 // specified level.
-func (t *TracerMemory) FilterEntries(level Level) []Entry {
-	var res []Entry
+func (t *TracerMemory) FilterEntries(level Level) []TracerEntry {
+	var res []TracerEntry
 	for _, e := range t.Entries {
 		if e.Level >= level {
 			res = append(res, e)
