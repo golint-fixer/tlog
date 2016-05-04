@@ -16,12 +16,15 @@
 
 package tlog
 
-// A Tracer represents a container that stores event entries for a service.
-type Tracer interface {
-	// AddEntry appends a new event to current container.
-	AddEntry(
-		level Level, code, msg string,
-		htStatus int, err error,
-		svcname string, stack ...string,
-	)
+// A TracerNop represents a container for service event entries that stores nothing.
+type TracerNop struct{}
+
+// NewTracerNop creates a new instance of TracerNop type.
+func NewTracerNop() *TracerNop {
+	return &TracerNop{}
 }
+
+// AddEntry does nothing.
+func (*TracerNop) AddEntry(Level, string, string, int, error, string, ...string) {}
+
+var _ Tracer = (*TracerNop)(nil)
